@@ -1,16 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 #include <string>
 
 using namespace std;
 
 class Property {
-protected:
+
+public:
     string address;
     double price;
 
-public:
     Property(const string& addr = "", double pr = 0) : address(addr), price(pr) {}
 
     virtual void displayDetails() = 0;
@@ -31,18 +32,18 @@ ostream& operator<<(ostream& outputStream, Property& property) {
 }
 
 class ResidentialProperty : public Property {
-private:
+
+public:
     int bedrooms;
     int bathrooms;
 
-public:
     ResidentialProperty(const string& addr = "", double pr = 0, int beds = 0, int baths = 0)
         : Property(addr, pr), bedrooms(beds), bathrooms(baths) {}
 
     void displayDetails() override {
         cout << "Residential Property Details:" << endl;
         cout << *this;
-        cout << "Bedrooms: " << bedrooms << endl;
+        cout << "Bedrooms: " << bedrooms << endl;                
         cout << "Bathrooms: " << bathrooms << endl;
         cout << endl;
     }
@@ -57,11 +58,12 @@ ifstream& operator>>(ifstream& inputFile, ResidentialProperty& resProperty) {
 }
 
 class CommercialProperty : public Property {
-private:
-    int floors;
-    int rooms;
 
 public:
+    int floors;
+    int rooms;
+ 
+
     CommercialProperty(const string& addr = "", double pr = 0, int flrs = 0, int rms = 0)
         : Property(addr, pr), floors(flrs), rooms(rms) {}
 
@@ -83,10 +85,10 @@ ifstream& operator>>(ifstream& inputFile, CommercialProperty& comProperty) {
 }
 
 class RealEstateAgency {
-private:
-    vector<Property*> properties;
 
 public:
+    vector<Property*> properties;
+
     void readPropertiesFromFile(const string& fileName) {
         ifstream inputFile(fileName);
         if (!inputFile) {
@@ -125,9 +127,46 @@ public:
 };
 
 int main() {
-    RealEstateAgency agency;
-    agency.readPropertiesFromFile("properties.txt");
-    agency.displayAllProperties();
+
+ifstream inputFile("properties.txt"); 
+    
+    if (!inputFile) {
+        cout << "Error opening file." << endl;
+        return 1;
+    }
+    cout << "properties addresses: "; 
+    string line;
+    while (getline(inputFile, line)) {
+        istringstream iss(line);
+        string word;
+        iss >> word; 
+        iss >> word; 
+
+        cout << word << endl;
+    }
+    
+    inputFile.close();
+
+    string address;
+    cout << "Enter the address of the property: ";
+    getline(cin, address);
+
+    ResidentialProperty resProperty(address);
+    cout << "Enter the number of bedrooms: ";
+    cin >> resProperty.bedrooms;
+    cout << "Enter the number of bathrooms: ";
+    cin >> resProperty.bathrooms;
+
+    resProperty.displayDetails();
+
+
+
+
+
+
+    
+
+
 
     return 0;
 }
